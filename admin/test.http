@@ -1,0 +1,135 @@
+### SmartCity Parking – Test API
+### Base URL: http://localhost:11000
+
+# ============================================================
+# AUTH
+# ============================================================
+
+### Login come ADMIN (maria)
+POST http://localhost:11000/api/login
+Content-Type: application/json
+
+{
+  "username": "maria",
+  "password": "coffani"
+}
+
+### Login come USER (luigi)
+POST http://localhost:11000/api/login
+Content-Type: application/json
+
+{
+  "username": "luigi",
+  "password": "verdi"
+}
+
+### Logout
+POST http://localhost:11000/api/logout
+
+# ============================================================
+# ROTTE UTENTE
+# ============================================================
+
+### Visualizza tutte le aree (user o admin)
+GET http://localhost:11000/api/aree
+
+### Prenota un posto in area-001
+POST http://localhost:11000/api/prenota
+Content-Type: application/json
+
+{
+  "area_id": "area-001"
+}
+
+### Storico prenotazioni dell'utente loggato
+GET http://localhost:11000/api/prenotazioni/mie
+
+# ============================================================
+# PUNTO 1 – ADMIN: Aggiungere una nuova area
+# ============================================================
+
+### Crea area con id personalizzato
+POST http://localhost:11000/api/aree
+Content-Type: application/json
+
+{
+  "id": "area-003",
+  "nome": "Parcheggio Ospedale",
+  "capienza_max": 20
+}
+
+### Crea area con id automatico (uuid)
+POST http://localhost:11000/api/aree
+Content-Type: application/json
+
+{
+  "nome": "Parcheggio Teatro",
+  "capienza_max": 15
+}
+
+### Errore: capienza mancante
+POST http://localhost:11000/api/aree
+Content-Type: application/json
+
+{
+  "nome": "Area senza capienza"
+}
+
+### Errore: id duplicato
+POST http://localhost:11000/api/aree
+Content-Type: application/json
+
+{
+  "id": "area-001",
+  "nome": "Duplicato",
+  "capienza_max": 10
+}
+
+# ============================================================
+# PUNTO 2 – ADMIN: Storico TUTTE le prenotazioni
+# ============================================================
+
+### Tutte le prenotazioni (nessun filtro)
+GET http://localhost:11000/api/prenotazioni/tutte
+
+### Filtro per area
+GET http://localhost:11000/api/prenotazioni/tutte?area_id=area-001
+
+### Filtro per utente
+GET http://localhost:11000/api/prenotazioni/tutte?user=luigi
+
+### Filtro per prenotazioni attive
+GET http://localhost:11000/api/prenotazioni/tutte?attiva=true
+
+### Filtro per prenotazioni scadute
+GET http://localhost:11000/api/prenotazioni/tutte?attiva=false
+
+### Filtri combinati: area + utente
+GET http://localhost:11000/api/prenotazioni/tutte?area_id=area-001&user=luigi
+
+# ============================================================
+# PUNTO 3 – ADMIN: Andamento giornaliero ultimi 30 giorni
+# ============================================================
+
+### Andamento per tutte le aree
+GET http://localhost:11000/api/statistiche/andamento
+
+# ============================================================
+# ERRORI DI AUTORIZZAZIONE
+# ============================================================
+
+### Tentativo di creare area come USER -> 403
+# (prima fai login come luigi, poi chiama questa rotta)
+POST http://localhost:11000/api/aree
+Content-Type: application/json
+
+{
+  "nome": "Tentativo non autorizzato",
+  "capienza_max": 5
+}
+
+### Tentativo di vedere tutte le prenotazioni come USER -> 403
+GET http://localhost:11000/api/prenotazioni/tutte
+
+### Tentativo senza login -> 401
+GET http://localhost:11000/api/aree
