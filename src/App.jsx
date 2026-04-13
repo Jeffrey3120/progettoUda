@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 import { useState } from 'react'
 import Login from './pages/Login'
 import Parcheggi from './pages/Parcheggi'
 import Prenota from './pages/Prenota'
 import Storico from './pages/Storico'
-=======
-
->>>>>>> 7eabace7f684a468629afe0d3fd14b58169af05d
 
 function App() {
 
