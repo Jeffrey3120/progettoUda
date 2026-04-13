@@ -9,7 +9,7 @@ function Parcheggi() {
   }, [])
 
   async function caricaAree() {
-    const risposta = await fetch('http://localhost:3000/api/parcheggi/disponibilita', {
+    const risposta = await fetch('http://localhost:11000/api/parcheggi/disponibilita', {
       credentials: 'include'
     })
     const dati = await risposta.json()
