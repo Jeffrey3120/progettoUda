@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import Login from './pages/Login'
 import Parcheggi from './pages/Parcheggi'
@@ -30,9 +31,9 @@ function App() {
       <hr />
 
       {paginaAttuale === 'parcheggi' && <Parcheggi />}
-      {paginaAttuale === 'prenota'   && <Prenota />}
-      {paginaAttuale === 'storico'   && <Storico />}
-    
+      {paginaAttuale === 'prenota' && <Prenota />}
+      {paginaAttuale === 'storico' && <Storico />}
+
     </div>
   )
 }
