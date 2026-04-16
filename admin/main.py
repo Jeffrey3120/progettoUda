@@ -14,6 +14,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app, supports_credentials=True)
 
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+
 from auth import require_login, require_admin, login, logout
 
 

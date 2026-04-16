@@ -1,44 +1,73 @@
 import { useState, useEffect } from 'react'
+import './Parcheggi.css'
 
 function Parcheggi() {
 
-  const [aree, setAree] = useState([])
+  const [aree, setAree]               = useState([])
+  const [errore, setErrore]           = useState(null)
+  const [caricamento, setCaricamento] = useState(true)
 
-  useEffect(() => {
-    caricaAree()
-  }, [])
+  useEffect(() => { caricaAree() }, [])
 
   async function caricaAree() {
-    const risposta = await fetch('http://localhost:11000/api/parcheggi/disponibilita', {
-      credentials: 'include'
-    })
-    const dati = await risposta.json()
-    setAree(dati)
+    setErrore(null)
+    setCaricamento(true)
+    try {
+      const risposta = await fetch('/api/aree', { credentials: 'include' })
+      const dati = await risposta.json()
+      if (!risposta.ok) throw new Error(dati.error || `Errore ${risposta.status}`)
+      setAree(dati)
+    } catch (err) {
+      setErrore(err.message)
+    } finally {
+      setCaricamento(false)
+    }
   }
 
-  return (
-    <div>
-      <h2>Aree di parcheggio</h2>
-      <button onClick={caricaAree}>Aggiorna</button>
+  if (caricamento) return <div className="stato-caricamento">Caricamento aree...</div>
 
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Nome area</th>
-            <th>Capienza totale</th>
-            <th>Posti liberi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {aree.map((area) => (
-            <tr key={area.id}>
-              <td>{area.nome || 'Area ' + area.id}</td>
-              <td>{area.capienza_massima}</td>
-              <td>{area.posti_disponibili}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  return (
+    <div className="parcheggi-page">
+
+      <div className="parcheggi-header">
+        <div className="parcheggi-titoli">
+          <h2>Aree di parcheggio</h2>
+          <p>{aree.length} {aree.length === 1 ? 'area trovata' : 'aree trovate'}</p>
+        </div>
+        <button className="btn-aggiorna" onClick={caricaAree}>Aggiorna</button>
+      </div>
+
+      {errore && <div className="alert alert-error">{errore}</div>}
+
+      <div className="aree-grid">
+        {aree.map((area) => {
+          const occupazione = Math.round(
+            ((area.capienza_max - area.posti_disponibili) / area.capienza_max) * 100
+          )
+          const piena = area.posti_disponibili === 0
+
+          return (
+            <div key={area.id} className={`area-card${piena ? ' piena' : ''}`}>
+
+              <p className="area-nome">{area.nome}</p>
+
+              <div className="area-stats">
+                <span>Capienza: <strong>{area.capienza_max}</strong></span>
+                <span className={`badge-posti ${piena ? 'rosso' : 'verde'}`}>
+                  {piena ? 'Pieno' : `${area.posti_disponibili} liberi`}
+                </span>
+              </div>
+
+              <div className="barra-sfondo">
+                <div className="barra-riempimento" style={{ width: `${occupazione}%` }} />
+              </div>
+              <p className="barra-label">{occupazione}% occupato</p>
+
+            </div>
+          )
+        })}
+      </div>
+
     </div>
   )
 }
