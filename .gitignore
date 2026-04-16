@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python
+admin/__pycache__/
+admin/venv/
+admin/*.pyc
+*.pyc
+
+# Database SQLite (dati locali)
+*.db
+
+# Variabili d'ambiente
+.env
+*.env
