@@ -4,12 +4,22 @@ function Storico() {
 
   const [prenotazioni, setPrenotazioni] = useState([])
 
-  useEffect(() => {
-    fetch('http://localhost:3000/api/storico', { credentials: 'include' })
-      .then((r) => r.json())
-      .then((dati) => setPrenotazioni(dati))
-  }, [])
+const [errore, setErrore] = useState(null)
+const [caricamento, setCaricamento] = useState(true)
 
+useEffect(() => {
+  fetch('/api/prenotazioni/mie', { credentials: 'include' })
+    .then((r) => {
+      if (!r.ok) throw new Error(`Errore ${r.status}`)
+      return r.json()
+    })
+    .then((dati) => setPrenotazioni(dati))
+    .catch((err) => setErrore(err.message))
+    .finally(() => setCaricamento(false))
+}, [])
+
+if (caricamento) return <p>Caricamento...</p>
+if (errore)      return <p>Errore: {errore}</p>
   return (
     <div>
       <h2>Le mie prenotazioni</h2>
@@ -27,7 +37,7 @@ function Storico() {
         <tbody>
           {prenotazioni.map((p) => (
             <tr key={p.id}>
-              <td>{p.nome_area || 'Area ' + p.area_id}</td>
+              <td>{p.area_nome || 'Area ' + p.area_id}</td>
               <td>{new Date(p.inizio).toLocaleString('it-IT')}</td>
               <td>{new Date(p.fine).toLocaleString('it-IT')}</td>
             </tr>
