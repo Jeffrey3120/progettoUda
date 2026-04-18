@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
+import './style.css'
 
 function Storico() {
-
   const [prenotazioni, setPrenotazioni] = useState([])
 
   useEffect(() => {
@@ -11,12 +11,12 @@ function Storico() {
   }, [])
 
   return (
-    <div>
-      <h2>Le mie prenotazioni</h2>
+    <div className="container-user">
+      <h2 className="titolo-sezione">Le mie prenotazioni</h2>
 
       {prenotazioni.length === 0 && <p>Nessuna prenotazione trovata.</p>}
 
-      <table border="1">
+      <table className="tabella-storico">
         <thead>
           <tr>
             <th>Area</th>
