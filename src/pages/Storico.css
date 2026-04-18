@@ -1,0 +1,76 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.storico-page {
+  padding: 2rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.storico-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #f0fafa;
+  padding-bottom: 1rem;
+}
+
+.storico-header h2 {
+  color: #0f3638;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tabella-storico {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+}
+
+.riga-prenotazione {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.riga-prenotazione td {
+  padding: 1rem;
+  color: #445;
+  font-size: 0.9rem;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.riga-prenotazione td:first-child {
+  border-left: 1px solid #f0f0f0;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  font-weight: 600;
+  color: #01696f;
+}
+
+.riga-prenotazione td:last-child {
+  border-right: 1px solid #f0f0f0;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.badge-stato {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stato-attiva { background: #eaf7ef; color: #1a7d4e; }
+.stato-conclusa { background: #f4f4f4; color: #888; }
+
+.nessun-dato {
+  text-align: center;
+  padding: 3rem;
+  background: #fdfdfd;
+  border: 2px dashed #eee;
+  border-radius: 16px;
+  color: #9aa;
+}

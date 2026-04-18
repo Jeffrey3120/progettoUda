@@ -1,0 +1,109 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.parcheggi-page {
+  padding: 2rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.parcheggi-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.parcheggi-titoli h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1d23;
+  margin-bottom: 0.2rem;
+}
+
+.parcheggi-titoli p {
+  font-size: 0.83rem;
+  color: #9aa;
+}
+
+.aree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.1rem;
+}
+
+.area-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  border: 1.5px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.area-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.1);
+}
+
+.area-card.piena {
+  border-color: #f0cccc;
+  background: #fffbfb;
+}
+
+.area-nome {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1d23;
+}
+
+.area-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.barra-sfondo {
+  height: 6px;
+  background: #eee;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barra-riempimento {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #01696f, #20a8b0);
+  transition: width 0.4s ease;
+}
+
+.btn-prenota {
+  padding: 0.6rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  background: linear-gradient(135deg, #01696f, #0c8a92);
+  color: white;
+  box-shadow: 0 3px 10px rgba(1,105,111,0.25);
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-prenota:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-prenota:disabled {
+  background: #f3f3f3;
+  color: #bbb;
+  cursor: not-allowed;
+  box-shadow: none;
+}
