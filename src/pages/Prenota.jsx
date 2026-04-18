@@ -4,7 +4,6 @@ import './style.css'
 function Prenota() {
 
   const [aree, setAree]           = useState([])
-  const [aree, setAree] = useState([])
   const [areaScelta, setAreaScelta] = useState('')
   const [messaggio, setMessaggio] = useState(null)
   const [tipoMsg, setTipoMsg]     = useState('success')
@@ -55,10 +54,6 @@ function Prenota() {
       setTipoMsg('error')
     } finally {
       setInCorso(false)
-    if (risposta.ok) {
-      setMessaggio('Prenotazione confermata! Durata: 1 ora')
-    } else {
-      setMessaggio('Errore: ' + dati.error)
     }
   }
 
@@ -116,34 +111,6 @@ function Prenota() {
           {inCorso ? 'Prenotazione in corso...' : 'Conferma prenotazione'}
         </button>
 
-      </div>
-    <div className="container-user">
-      <div className="box-prenotazione">
-        <h2 className="titolo-sezione">Prenota un posto</h2>
-
-        <select 
-          className="select-area" 
-          value={areaScelta} 
-          onChange={(e) => setAreaScelta(e.target.value)}
-        >
-          <option value="">-- Scegli un area --</option>
-          {aree.map((area) => (
-            <option key={area.id} value={area.id} disabled={area.posti_disponibili <= 0}>
-              {area.nome || 'Area ' + area.id} ({area.posti_disponibili} posti liberi)
-            </option>
-          ))}
-        </select>
-
-        <br /><br />
-        <button className="bottone-conferma" onClick={handlePrenota}>
-          Conferma prenotazione
-        </button>
-
-        {messaggio && (
-          <div className={`messaggio-stato ${messaggio.includes('Errore') ? 'errore' : 'successo'}`}>
-            {messaggio}
-          </div>
-        )}
       </div>
     </div>
   )
