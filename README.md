@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🅿️ SmartCity Parking
+# SmartCity Parking
 
 **Applicazione web full-stack per la gestione intelligente di aree di parcheggio urbano**
 
@@ -14,14 +14,14 @@
 
 ---
 
-## 📌 Descrizione
+## Descrizione
 
 **SmartCity Parking** è un'applicazione web per la gestione in tempo reale di aree di parcheggio urbano.  
 Gli utenti possono visualizzare la disponibilità dei posti ed effettuare prenotazioni; gli amministratori dispongono di strumenti avanzati per il monitoraggio, la gestione delle aree e l'analisi statistica.
 
 ---
 
-## 📋 Analisi dei Requisiti
+## Analisi dei Requisiti
 
 ### Stakeholder
 
@@ -33,7 +33,7 @@ I soggetti coinvolti nel progetto sono:
 
 ---
 
-### ✅ Requisiti Funzionali
+### Requisiti Funzionali
 > Descrivono **cosa fa il sistema**.
 
 - Il sistema consente l'autenticazione degli utenti tramite username e password
@@ -48,7 +48,7 @@ I soggetti coinvolti nel progetto sono:
 
 ---
 
-### ⚙️ Requisiti Non Funzionali
+### Requisiti Non Funzionali
 > Descrivono **come opera il sistema**.
 
 - **Prestazioni** — la funzione `aggiorna_disponibilita()` viene eseguita in modo sincrono ad ogni chiamata critica per garantire la coerenza dei dati
@@ -59,7 +59,7 @@ I soggetti coinvolti nel progetto sono:
 
 ---
 
-### 🏛️ Requisiti di Dominio
+### Requisiti di Dominio
 > Derivano dal **contesto applicativo** della gestione parcheggi urbani.
 
 - Una prenotazione occupa esattamente **1 posto** e ha una durata fissa di **1 ora**
@@ -70,7 +70,7 @@ I soggetti coinvolti nel progetto sono:
 
 ---
 
-### 🔒 Requisiti di Vincolo
+### Requisiti di Vincolo
 > Limiti tecnici e organizzativi entro cui il sistema è sviluppato.
 
 - Il backend è sviluppato in **Python 3** con il framework **Flask** e l'ORM **SQLAlchemy**
@@ -79,7 +79,4 @@ I soggetti coinvolti nel progetto sono:
 - Il backend è esposto sulla porta **11000**; il frontend sulla porta **5173** in fase di sviluppo
 - La comunicazione frontend-backend avviene tramite **API REST JSON** con autenticazione basata su **cookie di sessione** (`credentials: 'include'`)
 - Le dipendenze Python sono gestite con **uv** tramite `pyproject.toml` e `uv.lock`
-
 ---
-
-## 🏗️ Struttura del Progetto
