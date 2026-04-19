@@ -107,3 +107,72 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+/* ── PRENOTAZIONI ATTIVE UTENTE ── */
+.mie-attive {
+  margin-top: 2.5rem;
+}
+
+.mie-attive-titolo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #9aa;
+  margin-bottom: 0.9rem;
+}
+
+.mie-attive-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.prenotazione-attiva-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-left: 3px solid #01696f;
+}
+
+.pren-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pren-area {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #0f3638;
+}
+
+.pren-orario {
+  font-size: 0.8rem;
+  color: #9aa;
+}
+
+.btn-cancella {
+  background: none;
+  border: 1.5px solid #f0cccc;
+  color: #c0392b;
+  padding: 0.3rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-cancella:hover:not(:disabled) {
+  background: #fdf2f2;
+  border-color: #c0392b;
+}
+.btn-cancella:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

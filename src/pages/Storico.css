@@ -11,12 +11,272 @@
   margin-bottom: 2rem;
   border-bottom: 2px solid #f0fafa;
   padding-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.storico-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .storico-header h2 {
   color: #0f3638;
   font-size: 1.5rem;
   font-weight: 700;
+}
+
+.storico-sottotitolo {
+  font-size: 0.83rem;
+  color: #9aa;
+  margin-top: 0.2rem;
+}
+
+/* ── FILTRO AREA e UTENTE ── */
+.filtro-gruppo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filtro-gruppo label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #556;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.filtro-gruppo select {
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid #e4e4e4;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1a1d23;
+  background: #fafafa;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filtro-gruppo select:focus {
+  border-color: #01696f;
+  box-shadow: 0 0 0 3px rgba(1,105,111,0.1);
+}
+
+/* ── BADGE FILTRI ATTIVI ── */
+.filtri-attivi-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem 0.9rem;
+  background: #f0fafa;
+  border: 1px solid #c2e4e6;
+  border-radius: 10px;
+}
+
+.filtri-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #556;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-right: 0.25rem;
+}
+
+.badge-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: #fff;
+  border: 1.5px solid #c2e4e6;
+  color: #01696f;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem 0.2rem 0.7rem;
+  border-radius: 99px;
+}
+
+.badge-filtro-reset {
+  background: none;
+  border: none;
+  color: #01696f;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.1rem;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.badge-filtro-reset:hover { opacity: 1; }
+
+.reset-tutti {
+  background: none;
+  border: none;
+  color: #9aa;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.reset-tutti:hover { color: #c0392b; }
+
+/* ── SEZIONI ── */
+.sezione-titolo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #9aa;
+  margin-bottom: 0.9rem;
+}
+
+.sezione-grafici {
+  margin-bottom: 2rem;
+}
+
+/* ── GRAFICI ── */
+.grafici-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.1rem;
+}
+
+.grafico-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 1.1rem 1.25rem 0.75rem;
+  overflow: hidden;
+}
+
+.grafico-area-nome {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f3638;
+  margin-bottom: 0.6rem;
+}
+
+.grafico-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── THEAD TABELLA ── */
+.tabella-storico thead tr th {
+  padding: 0.5rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9aa;
+  text-align: left;
+}
+
+/* ── CELLA AREA con nome + id ── */
+.td-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.area-nome-tag {
+  font-weight: 700;
+  color: #0f3638;
+  font-size: 0.875rem;
+}
+
+.area-id-tag {
+  font-size: 0.72rem;
+  color: #bbb;
+  font-family: monospace;
+}
+
+/* ── STATO CARICAMENTO ── */
+.stato-caricamento {
+  text-align: center;
+  padding: 4rem;
+  color: #aaa;
+  font-size: 0.95rem;
+}
+
+.stato-caricamento.errore {
+  color: #b94040;
+}
+
+/* ── HEADER AZIONI (filtro + pulsante elimina area) ── */
+.storico-header-azioni {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── PULSANTE ELIMINA AREA ── */
+.btn-elimina-area {
+  background: #fdf2f2;
+  color: #c0392b;
+  border: 1.5px solid #f0cccc;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-elimina-area:hover {
+  background: #fce8e8;
+  border-color: #c0392b;
+}
+
+/* ── FEEDBACK BANNER ── */
+.alert-feedback {
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+}
+.feedback-ok  { background: #eaf7ef; color: #1a7d4e; border: 1px solid #b7e4cc; }
+.feedback-err { background: #fdf2f2; color: #b94040; border: 1px solid #f0cccc; }
+
+/* ── PULSANTE ELIMINA SINGOLA (cella tabella) ── */
+.td-azioni {
+  text-align: right;
+  width: 48px;
+}
+
+.btn-elimina-singola {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  color: #c0392b;
+  opacity: 0.55;
+  transition: opacity 0.15s, background 0.15s;
+}
+.btn-elimina-singola:hover:not(:disabled) {
+  opacity: 1;
+  background: #fdf2f2;
+}
+.btn-elimina-singola:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .tabella-storico {

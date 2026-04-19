@@ -218,6 +218,20 @@ def crea_area():
     return jsonify(nuova_area.to_dict()), 201
 
 
+@app.get("/api/utenti")
+def get_utenti():
+    """[ADMIN] Restituisce la lista degli utenti che hanno almeno una prenotazione."""
+    auth = require_login()
+    if auth:
+        return auth
+    admin = require_admin()
+    if admin:
+        return admin
+
+    utenti = db.session.query(Prenotazione.user).distinct().all()
+    return jsonify([u[0] for u in utenti]), 200
+
+
 @app.get("/api/prenotazioni/tutte")
 def get_tutte_prenotazioni():
     """[ADMIN] Storico completo delle prenotazioni con filtri opzionali."""
@@ -284,6 +298,149 @@ def get_andamento():
             andamento[p.area_id]["giorni"][data_p.isoformat()] += 1
 
     return jsonify(andamento), 200
+
+
+# ─────────────────────────────────────────
+# ROUTE ELIMINAZIONE
+# ─────────────────────────────────────────
+
+@app.delete("/api/prenotazioni")
+def elimina_prenotazioni_filtrate():
+    """
+    [ADMIN] Eliminazione bulk con filtri combinabili.
+    Query params opzionali: user, area_id
+    - Solo user    → elimina tutte le prenotazioni di quell'utente
+    - Solo area_id → elimina tutte le prenotazioni di quell'area
+    - Entrambi     → elimina le prenotazioni di quell'utente in quell'area
+    - Nessuno      → 400 (richiede almeno un filtro per sicurezza)
+    """
+    auth = require_login()
+    if auth:
+        return auth
+    admin = require_admin()
+    if admin:
+        return admin
+
+    filtro_user = request.args.get("user")
+    filtro_area = request.args.get("area_id")
+
+    if not filtro_user and not filtro_area:
+        return jsonify({"error": "Specificare almeno un filtro (user o area_id)"}), 400
+
+    query = Prenotazione.query
+    if filtro_user:
+        query = query.filter_by(user=filtro_user)
+    if filtro_area:
+        query = query.filter_by(area_id=filtro_area)
+
+    prenotazioni = query.all()
+
+    # Ripristina disponibilità per le prenotazioni attive
+    aree_da_aggiornare = {}
+    for p in prenotazioni:
+        if p.attiva:
+            if p.area_id not in aree_da_aggiornare:
+                aree_da_aggiornare[p.area_id] = 0
+            aree_da_aggiornare[p.area_id] += 1
+
+    for area_id, posti_da_liberare in aree_da_aggiornare.items():
+        area = Area.query.get(area_id)
+        if area:
+            area.posti_disponibili = min(
+                area.posti_disponibili + posti_da_liberare,
+                area.capienza_max
+            )
+
+    for p in prenotazioni:
+        db.session.delete(p)
+
+    db.session.commit()
+
+    # Messaggio descrittivo
+    if filtro_user and filtro_area:
+        area_obj = Area.query.get(filtro_area)
+        nome_area = area_obj.nome if area_obj else filtro_area
+        msg = f"Eliminate {len(prenotazioni)} prenotazioni di '{filtro_user}' in '{nome_area}'"
+    elif filtro_user:
+        msg = f"Eliminate {len(prenotazioni)} prenotazioni di '{filtro_user}'"
+    else:
+        area_obj = Area.query.get(filtro_area)
+        nome_area = area_obj.nome if area_obj else filtro_area
+        msg = f"Eliminate {len(prenotazioni)} prenotazioni dell'area '{nome_area}'"
+
+    return jsonify({"message": msg, "eliminate": len(prenotazioni)}), 200
+
+
+@app.delete("/api/prenotazioni/<string:prenotazione_id>")
+def elimina_prenotazione(prenotazione_id):
+    """
+    Elimina una singola prenotazione.
+    - Utente standard: può eliminare solo le proprie.
+    - Admin: può eliminare qualsiasi prenotazione.
+    """
+    auth = require_login()
+    if auth:
+        return auth
+
+    prenotazione = Prenotazione.query.get(prenotazione_id)
+    if not prenotazione:
+        return jsonify({"error": "Prenotazione non trovata"}), 404
+
+    # Controlla permessi: non-admin può eliminare solo le proprie
+    if session.get("role") != "admin" and prenotazione.user != session["user"]:
+        return jsonify({"error": "Non puoi eliminare prenotazioni di altri utenti"}), 403
+
+    # Se la prenotazione era attiva, restituisce il posto all'area
+    if prenotazione.attiva:
+        area = Area.query.get(prenotazione.area_id)
+        if area:
+            area.posti_disponibili = min(
+                area.posti_disponibili + 1,
+                area.capienza_max
+            )
+
+    db.session.delete(prenotazione)
+    db.session.commit()
+
+    return jsonify({"message": "Prenotazione eliminata", "id": prenotazione_id}), 200
+
+
+@app.delete("/api/aree/<string:area_id>/prenotazioni")
+def elimina_prenotazioni_area(area_id):
+    """
+    [ADMIN] Elimina tutte le prenotazioni di una specifica area.
+    Ripristina i posti disponibili per le prenotazioni attive eliminate.
+    """
+    auth = require_login()
+    if auth:
+        return auth
+    admin = require_admin()
+    if admin:
+        return admin
+
+    area = Area.query.get(area_id)
+    if not area:
+        return jsonify({"error": "Area non trovata"}), 404
+
+    prenotazioni = Prenotazione.query.filter_by(area_id=area_id).all()
+
+    # Conta quelle attive per ricalcolare la disponibilità
+    attive = sum(1 for p in prenotazioni if p.attiva)
+    area.posti_disponibili = min(
+        area.posti_disponibili + attive,
+        area.capienza_max
+    )
+
+    for p in prenotazioni:
+        db.session.delete(p)
+
+    db.session.commit()
+
+    return jsonify({
+        "message":  f"Eliminate {len(prenotazioni)} prenotazioni dell'area '{area.nome}'",
+        "area_id":  area_id,
+        "eliminate": len(prenotazioni),
+    }), 200
 
 
 if __name__ == "__main__":
