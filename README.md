@@ -87,20 +87,18 @@ I soggetti coinvolti nel progetto sono:
 
 - **Python 3.13+** installato sul sistema
 - **Node.js** installato sul sistema
-- **uv** (opzionale, per la gestione moderna delle dipendenze Python; installabile con `pip install uv`)
 
 ### Installazione delle Dipendenze
 
 1. **Dipendenze Python**:
-   - Con uv (raccomandato): Esegui `uv sync` nella directory principale del progetto per installare tutte le dipendenze Python specificate in `pyproject.toml`.
-   - Con pip: Esegui `pip install -r requirements.txt` per installare le dipendenze dal file `requirements.txt`.
+   Esegui `pip install -r requirements.txt` per installare le dipendenze dal file `requirements.txt`.
 
 2. **Dipendenze Frontend**: Esegui `npm install` nella directory principale del progetto per installare tutte le dipendenze JavaScript specificate in `package.json`.
 
 ### Avvio dell'Applicazione
 
 1. **Avvia il Backend**: 
-   Con pip: `python admin/main.py` (assicurati che le dipendenze siano installate nell'ambiente Python attivo)
+   Esegui `python admin/main.py` (assicurati che le dipendenze siano installate nell'ambiente Python attivo).
    Il backend sarà disponibile su `http://localhost:11000`.
 
 2. **Avvia il Frontend**: In un altro terminale, scrivi il comando `npm install` ed esegui `npm run dev`. Il frontend sarà disponibile su `http://localhost:5173` e proxy le richieste API al backend.
@@ -109,9 +107,7 @@ I soggetti coinvolti nel progetto sono:
 
 ### Inizializzazione del Database
 
-- Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui:
-  Con pip: `python admin/seed.py`
-  per popolare il database con alcune aree di parcheggio di esempio.
+- Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui `python admin/seed.py` per popolare il database con alcune aree di parcheggio di esempio.
 
 ---
 
