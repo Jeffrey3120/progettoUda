@@ -119,7 +119,7 @@ function Storico() {
     }
   }
 
-  async function eliminaBulk() {
+  async function svuotaRisultati() {
     let conferma
     if (filtroUtente && filtroArea) {
       conferma = `Eliminare tutte le prenotazioni di "${filtroUtente}" nel "${nomeFiltroArea}"?`
@@ -191,7 +191,7 @@ function Storico() {
           </div>
 
           {(filtroArea || filtroUtente) && prenotazioni.length > 0 ? (
-            <button className="btn-elimina-area" onClick={eliminaBulk}>
+            <button className="btn-elimina-area" onClick={svuotaRisultati}>
               🗑&nbsp;
               {filtroUtente && filtroArea
                 ? `Elimina di ${filtroUtente} in area (${prenotazioni.length})`
