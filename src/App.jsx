@@ -6,9 +6,9 @@ import Storico  from './pages/Storico'
 import './App.css'
 
 const PAGINE = [
-  { id: 'parcheggi', label: 'Parcheggi' },
-  { id: 'prenota',   label: 'Prenota'   },
-  { id: 'storico',   label: 'Storico'   },
+  { id: 'parcheggi', label: 'Parcheggi', adminOnly: false },
+  { id: 'prenota',   label: 'Prenota',   adminOnly: false },
+  { id: 'storico',   label: 'Storico',   adminOnly: true  },
 ]
 
 function App() {

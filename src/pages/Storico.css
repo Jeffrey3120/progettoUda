@@ -205,7 +205,6 @@
   font-family: monospace;
 }
 
-/* ── STATO CARICAMENTO ── */
 .stato-caricamento {
   text-align: center;
   padding: 4rem;
@@ -217,7 +216,6 @@
   color: #b94040;
 }
 
-/* ── HEADER AZIONI (filtro + pulsante elimina area) ── */
 .storico-header-azioni {
   display: flex;
   align-items: center;
@@ -225,7 +223,6 @@
   flex-wrap: wrap;
 }
 
-/* ── PULSANTE ELIMINA AREA ── */
 .btn-elimina-area {
   background: #fdf2f2;
   color: #c0392b;

@@ -64,7 +64,6 @@ function Prenota() {
   return (
     <div className="parcheggi-page">
 
-      {/* ── Header ── */}
       <div className="parcheggi-header">
         <div className="parcheggi-titoli">
           <h2>Prenota un posto</h2>
@@ -72,14 +71,12 @@ function Prenota() {
         </div>
       </div>
 
-      {/* ── Feedback ── */}
       {messaggio && (
         <div className={`alert ${messaggio.tipo === 'ok' ? 'alert-success' : 'alert-error'}`}>
           {messaggio.testo}
         </div>
       )}
 
-      {/* ── Griglia aree ── */}
       <div className="aree-grid">
         {aree.map((area) => {
           const percentuale = ((area.capienza_max - area.posti_disponibili) / area.capienza_max) * 100
@@ -106,7 +103,6 @@ function Prenota() {
         })}
       </div>
 
-      {/* ── Prenotazioni attive dell'utente ── */}
       {mieAttive.length > 0 && (
         <div className="mie-attive">
           <h3 className="mie-attive-titolo">Le mie prenotazioni attive</h3>

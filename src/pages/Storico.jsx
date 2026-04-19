@@ -157,7 +157,6 @@ function Storico() {
   return (
     <div className="storico-page">
 
-      {/* ── Header ── */}
       <div className="storico-header">
         <div>
           <h2>Storico prenotazioni</h2>
@@ -167,7 +166,6 @@ function Storico() {
         </div>
 
         <div className="storico-header-azioni">
-          {/* Select Area */}
           <div className="filtro-gruppo">
             <label htmlFor="sel-area">Area</label>
             <select
@@ -180,7 +178,6 @@ function Storico() {
             </select>
           </div>
 
-          {/* Select Utente */}
           <div className="filtro-gruppo">
             <label htmlFor="sel-utente">Utente</label>
             <select
@@ -193,7 +190,6 @@ function Storico() {
             </select>
           </div>
 
-          {/* Pulsante elimina bulk — attivo solo se almeno un filtro è selezionato */}
           {(filtroArea || filtroUtente) && prenotazioni.length > 0 ? (
             <button className="btn-elimina-area" onClick={eliminaBulk}>
               🗑&nbsp;
@@ -211,7 +207,6 @@ function Storico() {
         </div>
       </div>
 
-      {/* ── Badge filtri attivi ── */}
       {filtriAttivi.length > 0 && (
         <div className="filtri-attivi-bar">
           <span className="filtri-label">Filtri attivi:</span>
@@ -227,7 +222,6 @@ function Storico() {
         </div>
       )}
 
-      {/* ── Feedback ── */}
       {feedback && (
         <div className={`alert-feedback ${feedback.tipo === 'ok' ? 'feedback-ok' : 'feedback-err'}`}>
           {feedback.testo}
@@ -250,7 +244,6 @@ function Storico() {
         </section>
       )}
 
-      {/* ── Tabella ── */}
       <section>
         <h3 className="sezione-titolo">Dettaglio prenotazioni</h3>
 
