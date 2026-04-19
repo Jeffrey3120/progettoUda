@@ -4,11 +4,11 @@
 
 **Applicazione web full-stack per la gestione intelligente di aree di parcheggio urbano**
 
-![Python]
-![Flask]
-![React]
-![SQLite]
-![Vite]
+Python
+Flask
+React
+SQLite
+Vite
 
 </div>
 
