@@ -80,3 +80,35 @@ I soggetti coinvolti nel progetto sono:
 - La comunicazione frontend-backend avviene tramite **API REST JSON** con autenticazione basata su **cookie di sessione** (`credentials: 'include'`)
 - Le dipendenze Python sono gestite con **uv** tramite `pyproject.toml` e `uv.lock`
 ---
+
+## Come Avviare il Progetto
+
+### Prerequisiti
+
+- **Python 3.13+** installato sul sistema
+- **Node.js** installato sul sistema
+- **uv** per la gestione delle dipendenze Python (installabile con `pip install uv`)
+
+### Installazione delle Dipendenze
+
+1. **Dipendenze Python**: Esegui `uv sync` nella directory principale del progetto per installare tutte le dipendenze Python specificate in `pyproject.toml`.
+
+2. **Dipendenze Frontend**: Esegui `npm install` nella directory principale del progetto per installare tutte le dipendenze JavaScript specificate in `package.json`.
+
+### Avvio dell'Applicazione
+
+1. **Avvia il Backend**: In un terminale, esegui `python admin/main.py`. Il backend sarà disponibile su `http://localhost:11000`.
+
+2. **Avvia il Frontend**: In un altro terminale, esegui `npm run dev`. Il frontend sarà disponibile su `http://localhost:5173` e proxy le richieste API al backend.
+
+3. Apri il browser e vai su `http://localhost:5173` per utilizzare l'applicazione.
+
+### Inizializzazione del Database
+
+- Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui `python admin/seed.py` per popolare il database con alcune aree di parcheggio di esempio.
+
+---
+
+### Note Aggiuntive
+- Il database SQLite `smartcity.db` verrà creato automaticamente nella directory `admin/instance/` alla prima esecuzione.
+- Per lo sviluppo, entrambi i server (backend e frontend) possono essere lasciati in esecuzione contemporaneamente.
