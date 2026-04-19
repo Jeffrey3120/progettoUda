@@ -1,5 +1,6 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+
 .parcheggi-page {
   padding: 2rem 1.5rem;
   max-width: 1100px;
@@ -7,9 +8,11 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+
+/* ── HEADER ── */
 .parcheggi-header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
 }
@@ -26,6 +29,14 @@
   color: #9aa;
 }
 
+/* ── HEADER AZIONI ── */
+.header-azioni {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ── BOTTONE AGGIORNA ── */
 .btn-aggiorna {
   background: #f0fafa;
   color: #01696f;
@@ -37,7 +48,36 @@
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
 }
-.btn-aggiorna:hover { background: #ddf4f5; border-color: #01696f; }
+
+.btn-aggiorna:hover {
+  background: #ddf4f5;
+  border-color: #01696f;
+}
+
+/* ── BOTTONE CREA ── */
+.btn-crea {
+  background: linear-gradient(135deg, #01696f, #0c8a92);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(1, 105, 111, 0.25);
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-crea:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(1, 105, 111, 0.32);
+}
+
+.btn-crea:active {
+  transform: translateY(0);
+}
+
 
 /* ── ALERT ── */
 .alert {
@@ -47,8 +87,10 @@
   margin-bottom: 1.25rem;
   line-height: 1.4;
 }
+
 .alert-success { background: #eaf7ef; color: #1a7d4e; border: 1px solid #b7e4cc; }
 .alert-error   { background: #fdf2f2; color: #b94040; border: 1px solid #f0cccc; }
+
 
 /* ── GRIGLIA AREE ── */
 .aree-grid {
@@ -99,6 +141,7 @@
   padding: 0.2rem 0.6rem;
   border-radius: 99px;
 }
+
 .badge-posti.verde { background: #eaf7ef; color: #1a7d4e; }
 .badge-posti.rosso { background: #fdf2f2; color: #b94040; }
 
@@ -127,6 +170,7 @@
   text-align: right;
 }
 
+
 /* ── BOTTONE PRENOTA ── */
 .btn-prenota {
   padding: 0.6rem;
@@ -144,11 +188,15 @@
   color: white;
   box-shadow: 0 3px 10px rgba(1,105,111,0.25);
 }
+
 .btn-prenota.disponibile:hover {
   opacity: 0.9;
   transform: translateY(-1px);
 }
-.btn-prenota.disponibile:active { transform: translateY(0); }
+
+.btn-prenota.disponibile:active {
+  transform: translateY(0);
+}
 
 .btn-prenota.pieno {
   background: #f3f3f3;
@@ -162,10 +210,213 @@
   transform: none;
 }
 
+
 /* ── STATO CARICAMENTO ── */
 .stato-caricamento {
   text-align: center;
   padding: 4rem;
   color: #aaa;
   font-size: 0.95rem;
+}
+
+
+/* ══════════════════════════════════════
+   MODALE CREA PARCHEGGIO
+══════════════════════════════════════ */
+
+.modale-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modale-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 16px 48px rgba(1, 105, 111, 0.18);
+  width: 100%;
+  max-width: 420px;
+  animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── MODALE HEADER ── */
+.modale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.4rem 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modale-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f3638;
+  margin: 0;
+}
+
+.modale-chiudi {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modale-chiudi:hover {
+  background: #f3f3f3;
+  color: #555;
+}
+
+/* ── MODALE FORM ── */
+.modale-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem 1.4rem;
+}
+
+.modale-form .input-group {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.modale-form .input-group label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #556;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.required {
+  color: #b94040;
+  margin-left: 2px;
+}
+
+.opzionale {
+  color: #aaa;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.72rem;
+}
+
+.modale-form .input-group input {
+  padding: 0.62rem 0.9rem;
+  border: 1.5px solid #e4e4e4;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #1a1d23;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+}
+
+.modale-form .input-group input:focus {
+  border-color: #01696f;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(1, 105, 111, 0.1);
+}
+
+/* ── MODALE STATO ── */
+.modale-stato {
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.83rem;
+  line-height: 1.4;
+}
+
+.modale-stato.success {
+  background: #eaf7ef;
+  color: #1a7d4e;
+  border: 1px solid #b7e4cc;
+}
+
+.modale-stato.error {
+  background: #fdf2f2;
+  color: #b94040;
+  border: 1px solid #f0cccc;
+}
+
+/* ── MODALE FOOTER ── */
+.modale-footer {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 0.25rem;
+}
+
+.btn-annulla {
+  background: #f3f3f3;
+  color: #555;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-annulla:hover {
+  background: #e8e8e8;
+}
+
+.btn-conferma {
+  background: linear-gradient(135deg, #01696f, #0c8a92);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(1, 105, 111, 0.25);
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-conferma:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-conferma:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-conferma:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

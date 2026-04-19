@@ -84,7 +84,7 @@ function App() {
       </nav>
 
       <div className="app-content">
-        {paginaAttuale === 'parcheggi' && <Parcheggi />}
+        {paginaAttuale === 'parcheggi' && <Parcheggi utente={utente}/>}
         {paginaAttuale === 'prenota'   && <Prenota />}
         {paginaAttuale === 'storico'   && <Storico />}
       </div>
