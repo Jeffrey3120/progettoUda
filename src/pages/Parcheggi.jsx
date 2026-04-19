@@ -90,7 +90,6 @@ function Parcheggi({ utente }) {
               + Crea parcheggio
             </button>
           )}
-          <button className="btn-aggiorna" onClick={caricaAree}>Aggiorna</button>
         </div>
       </div>
 

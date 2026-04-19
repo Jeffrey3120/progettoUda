@@ -12,9 +12,8 @@ const PAGINE = [
 ]
 
 function App() {
-
   const [utente, setUtente]               = useState(null)
-  const [controllo, setControllo]         = useState(true)   
+  const [controllo, setControllo]         = useState(true)
   const [paginaAttuale, setPaginaAttuale] = useState('parcheggi')
 
   useEffect(() => {
@@ -30,13 +29,13 @@ function App() {
   }, [])
 
   function handleLoginRiuscito(dati) {
-    localStorage.setItem('utente', JSON.stringify(dati))  
+    localStorage.setItem('utente', JSON.stringify(dati))
     setUtente(dati)
   }
 
   function handleLogout() {
     fetch('/api/logout', { method: 'POST', credentials: 'include' })
-    localStorage.removeItem('utente')                
+    localStorage.removeItem('utente')
     setUtente(null)
     setPaginaAttuale('parcheggi')
   }
@@ -59,7 +58,7 @@ function App() {
         </div>
 
         <div className="navbar-nav">
-          {PAGINE.map((p) => (
+          {PAGINE.filter((p) => !p.adminOnly || utente?.role === 'admin').map((p) => (
             <button
               key={p.id}
               className={`nav-btn${paginaAttuale === p.id ? ' attivo' : ''}`}
@@ -82,7 +81,7 @@ function App() {
       </nav>
 
       <div className="app-content">
-        {paginaAttuale === 'parcheggi' && <Parcheggi utente={utente}/>}
+        {paginaAttuale === 'parcheggi' && <Parcheggi utente={utente} />}
         {paginaAttuale === 'prenota'   && <Prenota />}
         {paginaAttuale === 'storico'   && <Storico />}
       </div>
