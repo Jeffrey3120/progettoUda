@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-from admin.analytics import calcola_andamento
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "chiavesegretissima")
