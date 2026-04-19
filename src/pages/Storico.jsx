@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import './Storico.css'
 
-// ── Grafico a linee SVG puro ──────────────────────────────────────────────────
 function GraficoLinee({ giorni }) {
   const entries = Object.entries(giorni)
   const valori  = entries.map(([, v]) => v)
@@ -49,31 +48,25 @@ function GraficoLinee({ giorni }) {
   )
 }
 
-// ── Componente principale ─────────────────────────────────────────────────────
 function Storico() {
-  // Dati
   const [prenotazioni, setPrenotazioni] = useState([])
   const [andamento,    setAndamento]    = useState({})
-  const [areeList,     setAreeList]     = useState([])   // [{ id, nome }]
-  const [utentiList,   setUtentiList]   = useState([])   // ['luigi', 'maria', ...]
+  const [areeList,     setAreeList]     = useState([])  
+  const [utentiList,   setUtentiList]   = useState([])   
 
-  // Filtri (null = nessun filtro attivo)
   const [filtroArea,   setFiltroArea]   = useState(null)
   const [filtroUtente, setFiltroUtente] = useState(null)
 
-  // UI
   const [caricamento,  setCaricamento]  = useState(true)
   const [errore,       setErrore]       = useState(null)
   const [feedback,     setFeedback]     = useState(null)
   const [eliminando,   setEliminando]   = useState(null)
 
-  // ── Helpers ──
   function mostraFeedback(tipo, testo) {
     setFeedback({ tipo, testo })
     setTimeout(() => setFeedback(null), 3500)
   }
 
-  // ── Carica lista aree + utenti (una volta sola) ──
   useEffect(() => {
     Promise.all([
       fetch('/api/statistiche/andamento', { credentials: 'include' }),
@@ -88,7 +81,6 @@ function Storico() {
     })
   }, [])
 
-  // ── Carica prenotazioni ogni volta che cambiano i filtri ──
   const caricaPrenotazioni = useCallback(async () => {
     setCaricamento(true)
     setErrore(null)
@@ -111,7 +103,6 @@ function Storico() {
 
   useEffect(() => { caricaPrenotazioni() }, [caricaPrenotazioni])
 
-  // ── Eliminazione singola ──
   async function eliminaPrenotazione(id) {
     if (!confirm('Eliminare questa prenotazione?')) return
     setEliminando(id)
@@ -128,9 +119,7 @@ function Storico() {
     }
   }
 
-  // ── Eliminazione bulk (filtri combinati) ──
   async function eliminaBulk() {
-    // Costruisce messaggio di conferma dinamico
     let conferma
     if (filtroUtente && filtroArea) {
       conferma = `Eliminare tutte le prenotazioni di "${filtroUtente}" nel "${nomeFiltroArea}"?`
@@ -139,7 +128,7 @@ function Storico() {
     } else if (filtroArea) {
       conferma = `Eliminare tutte le prenotazioni dell'area "${nomeFiltroArea}"?`
     } else {
-      return // non dovrebbe mai succedere (pulsante disabilitato)
+      return 
     }
     if (!confirm(conferma)) return
 
@@ -158,7 +147,6 @@ function Storico() {
     }
   }
 
-  // ── Computed ──
   const nomeFiltroArea   = areeList.find(a => a.id === filtroArea)?.nome
   const areeGrafico      = filtroArea ? areeList.filter(a => a.id === filtroArea) : areeList
   const filtriAttivi     = [
@@ -246,7 +234,6 @@ function Storico() {
         </div>
       )}
 
-      {/* ── Grafici (solo senza filtro utente, perché l'andamento è globale per area) ── */}
       {!filtroUtente && areeGrafico.length > 0 && (
         <section className="sezione-grafici">
           <h3 className="sezione-titolo">Andamento ultimi 30 giorni</h3>

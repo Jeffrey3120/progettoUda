@@ -14,10 +14,9 @@ const PAGINE = [
 function App() {
 
   const [utente, setUtente]               = useState(null)
-  const [controllo, setControllo]         = useState(true)   // ← nuovo
+  const [controllo, setControllo]         = useState(true)   
   const [paginaAttuale, setPaginaAttuale] = useState('parcheggi')
 
-  // Al mount: verifica se la sessione Flask è ancora valida
   useEffect(() => {
     fetch('/api/aree', { credentials: 'include' })
       .then((r) => {
@@ -31,18 +30,17 @@ function App() {
   }, [])
 
   function handleLoginRiuscito(dati) {
-    localStorage.setItem('utente', JSON.stringify(dati))  // ← nuovo
+    localStorage.setItem('utente', JSON.stringify(dati))  
     setUtente(dati)
   }
 
   function handleLogout() {
     fetch('/api/logout', { method: 'POST', credentials: 'include' })
-    localStorage.removeItem('utente')                     // ← nuovo
+    localStorage.removeItem('utente')                
     setUtente(null)
     setPaginaAttuale('parcheggi')
   }
 
-  // Evita il flash della pagina login mentre verifica la sessione
   if (controllo) return null
 
   if (utente === null) {

@@ -2,8 +2,6 @@
 # Esegui UNA SOLA VOLTA dopo aver avviato l'app almeno una volta
 # (così db.create_all() ha già creato le tabelle).
 #
-# Utilizzo: python seed.py
-
 from main import app, db
 from main import Area
 

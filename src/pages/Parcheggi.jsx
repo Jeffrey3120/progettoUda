@@ -8,7 +8,7 @@ function Parcheggi({ utente }) {
   const [caricamento, setCaricamento] = useState(true)
   const [mostraModale, setMostraModale] = useState(false)
   const [nuovaArea, setNuovaArea] = useState({ id: '', nome: '', capienza_max: '' })
-  const [invioStato, setInvioStato] = useState(null) // { tipo: 'success'|'error', msg }
+  const [invioStato, setInvioStato] = useState(null) 
   const [invioLoading, setInvioLoading] = useState(false)
 
   useEffect(() => { caricaAree() }, [])

@@ -4,7 +4,7 @@ import './Prenota.css'
 function Prenota() {
   const [aree,        setAree]        = useState([])
   const [mieAttive,   setMieAttive]   = useState([])
-  const [messaggio,   setMessaggio]   = useState(null)  // { tipo, testo }
+  const [messaggio,   setMessaggio]   = useState(null) 
   const [eliminando,  setEliminando]  = useState(null)
 
   function mostraMsg(tipo, testo) {

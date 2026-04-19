@@ -1,5 +1,3 @@
-# Backend SmartCity – Gestione Parcheggi
-
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import uuid
@@ -19,9 +17,7 @@ CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 from auth import require_login, require_admin, login, logout
 
 
-# ─────────────────────────────────────────
-# MODELLI
-# ─────────────────────────────────────────
+
 
 class Area(db.Model):
     id                = db.Column(db.String(50),  primary_key=True)
@@ -59,14 +55,8 @@ class Prenotazione(db.Model):
         }
 
 
-# Crea le tabelle se non esistono
 with app.app_context():
     db.create_all()
-
-
-# ─────────────────────────────────────────
-# HELPER
-# ─────────────────────────────────────────
 
 def ora():
     return datetime.now()
@@ -95,9 +85,6 @@ def aggiorna_disponibilita():
         db.session.commit()
 
 
-# ─────────────────────────────────────────
-# AUTH
-# ─────────────────────────────────────────
 
 @app.post("/api/login")
 def login_route():
@@ -107,10 +94,6 @@ def login_route():
 def logout_route():
     return logout()
 
-
-# ─────────────────────────────────────────
-# ROUTE PUBBLICHE / UTENTE
-# ─────────────────────────────────────────
 
 @app.get("/")
 def home():
@@ -181,9 +164,6 @@ def get_mie_prenotazioni():
     return jsonify([p.to_dict() for p in mie]), 200
 
 
-# ─────────────────────────────────────────
-# ROUTE ADMIN
-# ─────────────────────────────────────────
 
 @app.post("/api/aree")
 def crea_area():
@@ -300,10 +280,6 @@ def get_andamento():
     return jsonify(andamento), 200
 
 
-# ─────────────────────────────────────────
-# ROUTE ELIMINAZIONE
-# ─────────────────────────────────────────
-
 @app.delete("/api/prenotazioni")
 def elimina_prenotazioni_filtrate():
     """
@@ -335,7 +311,6 @@ def elimina_prenotazioni_filtrate():
 
     prenotazioni = query.all()
 
-    # Ripristina disponibilità per le prenotazioni attive
     aree_da_aggiornare = {}
     for p in prenotazioni:
         if p.attiva:
@@ -356,7 +331,6 @@ def elimina_prenotazioni_filtrate():
 
     db.session.commit()
 
-    # Messaggio descrittivo
     if filtro_user and filtro_area:
         area_obj = Area.query.get(filtro_area)
         nome_area = area_obj.nome if area_obj else filtro_area
@@ -386,11 +360,9 @@ def elimina_prenotazione(prenotazione_id):
     if not prenotazione:
         return jsonify({"error": "Prenotazione non trovata"}), 404
 
-    # Controlla permessi: non-admin può eliminare solo le proprie
     if session.get("role") != "admin" and prenotazione.user != session["user"]:
         return jsonify({"error": "Non puoi eliminare prenotazioni di altri utenti"}), 403
 
-    # Se la prenotazione era attiva, restituisce il posto all'area
     if prenotazione.attiva:
         area = Area.query.get(prenotazione.area_id)
         if area:
@@ -424,7 +396,6 @@ def elimina_prenotazioni_area(area_id):
 
     prenotazioni = Prenotazione.query.filter_by(area_id=area_id).all()
 
-    # Conta quelle attive per ricalcolare la disponibilità
     attive = sum(1 for p in prenotazioni if p.attiva)
     area.posti_disponibili = min(
         area.posti_disponibili + attive,

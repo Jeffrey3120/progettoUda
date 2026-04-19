@@ -1,9 +1,5 @@
-### SmartCity Parking – Test API
 ### Base URL: http://localhost:11000
 
-# ============================================================
-# AUTH
-# ============================================================
 
 ### Login come ADMIN (maria)
 POST http://localhost:11000/api/login
@@ -26,9 +22,6 @@ Content-Type: application/json
 ### Logout
 POST http://localhost:11000/api/logout
 
-# ============================================================
-# ROTTE UTENTE
-# ============================================================
 
 ### Visualizza tutte le aree (user o admin)
 GET http://localhost:11000/api/aree
@@ -44,9 +37,6 @@ Content-Type: application/json
 ### Storico prenotazioni dell'utente loggato
 GET http://localhost:11000/api/prenotazioni/mie
 
-# ============================================================
-# PUNTO 1 – ADMIN: Aggiungere una nuova area
-# ============================================================
 
 ### Crea area con id personalizzato
 POST http://localhost:11000/api/aree
@@ -85,9 +75,6 @@ Content-Type: application/json
   "capienza_max": 10
 }
 
-# ============================================================
-# PUNTO 2 – ADMIN: Storico TUTTE le prenotazioni
-# ============================================================
 
 ### Tutte le prenotazioni (nessun filtro)
 GET http://localhost:11000/api/prenotazioni/tutte
@@ -107,16 +94,10 @@ GET http://localhost:11000/api/prenotazioni/tutte?attiva=false
 ### Filtri combinati: area + utente
 GET http://localhost:11000/api/prenotazioni/tutte?area_id=area-001&user=luigi
 
-# ============================================================
-# PUNTO 3 – ADMIN: Andamento giornaliero ultimi 30 giorni
-# ============================================================
 
 ### Andamento per tutte le aree
 GET http://localhost:11000/api/statistiche/andamento
 
-# ============================================================
-# ERRORI DI AUTORIZZAZIONE
-# ============================================================
 
 ### Tentativo di creare area come USER -> 403
 # (prima fai login come luigi, poi chiama questa rotta)
