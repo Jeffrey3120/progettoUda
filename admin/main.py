@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "chiavesegretissima")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///smartcity.db'
@@ -15,6 +14,7 @@ db = SQLAlchemy(app)
 CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
 from auth import require_login, require_admin, login, logout
+
 
 class Area(db.Model):
     id                = db.Column(db.String(50),  primary_key=True)
@@ -29,6 +29,7 @@ class Area(db.Model):
             "capienza_max":      self.capienza_max,
             "posti_disponibili": self.posti_disponibili,
         }
+
 
 class Prenotazione(db.Model):
     id        = db.Column(db.String(50),  primary_key=True)
@@ -50,8 +51,10 @@ class Prenotazione(db.Model):
             "attiva":    self.attiva,
         }
 
+
 with app.app_context():
     db.create_all()
+
 
 def ora():
     return datetime.now()
@@ -60,7 +63,6 @@ def scade_tra_un_ora():
     return ora() + timedelta(hours=1)
 
 def aggiorna_disponibilita():
-
     now     = ora()
     scadute = Prenotazione.query.filter(
         Prenotazione.attiva == True,
@@ -74,17 +76,16 @@ def aggiorna_disponibilita():
     if scadute:
         db.session.commit()
 
-def _libera_posti(prenotazioni: list):
-
-    aree_da_aggiornare = {}
+def _libera_posti(prenotazioni):
+    conteggio = {}
     for p in prenotazioni:
         if p.attiva:
-            aree_da_aggiornare[p.area_id] = aree_da_aggiornare.get(p.area_id, 0) + 1
-
-    for area_id, posti in aree_da_aggiornare.items():
+            conteggio[p.area_id] = conteggio.get(p.area_id, 0) + 1
+    for area_id, posti in conteggio.items():
         area = Area.query.get(area_id)
         if area:
             area.posti_disponibili = min(area.posti_disponibili + posti, area.capienza_max)
+
 
 @app.post("/api/login")
 def login_route():
@@ -98,18 +99,18 @@ def logout_route():
 def home():
     return "SmartCity Parking – Server attivo"
 
+
 @app.get("/api/aree")
 def get_aree():
-
     auth = require_login()
     if auth:
         return auth
     aggiorna_disponibilita()
     return jsonify([a.to_dict() for a in Area.query.all()]), 200
 
+
 @app.post("/api/prenota")
 def prenota():
-
     auth = require_login()
     if auth:
         return auth
@@ -136,9 +137,9 @@ def prenota():
     db.session.commit()
     return jsonify(nuova.to_dict()), 201
 
+
 @app.get("/api/prenotazioni/mie")
 def get_mie_prenotazioni():
-
     auth = require_login()
     if auth:
         return auth
@@ -146,9 +147,9 @@ def get_mie_prenotazioni():
     mie = Prenotazione.query.filter_by(user=session["user"]).all()
     return jsonify([p.to_dict() for p in mie]), 200
 
+
 @app.post("/api/aree")
 def crea_area():
-
     auth = require_login()
     if auth:
         return auth
@@ -176,9 +177,9 @@ def crea_area():
     db.session.commit()
     return jsonify(nuova_area.to_dict()), 201
 
+
 @app.get("/api/utenti")
 def get_utenti():
-
     auth = require_login()
     if auth:
         return auth
@@ -188,9 +189,9 @@ def get_utenti():
     utenti = db.session.query(Prenotazione.user).distinct().all()
     return jsonify([u[0] for u in utenti]), 200
 
+
 @app.get("/api/prenotazioni/tutte")
 def get_tutte_prenotazioni():
-
     auth = require_login()
     if auth:
         return auth
@@ -211,9 +212,9 @@ def get_tutte_prenotazioni():
     risultati = query.all()
     return jsonify({"totale": len(risultati), "prenotazioni": [p.to_dict() for p in risultati]}), 200
 
+
 @app.get("/api/statistiche/andamento")
 def get_andamento():
-
     auth = require_login()
     if auth:
         return auth
@@ -221,16 +222,41 @@ def get_andamento():
     if admin:
         return admin
 
-    prenotazioni = [p.to_dict() for p in Prenotazione.query.all()]
-    aree         = [a.to_dict() for a in Area.query.all()]
+    oggi   = ora().date()
+    limite = oggi - timedelta(days=29)
+    tutte_le_date = [limite + timedelta(days=i) for i in range(30)]
 
-    andamento = calcola_andamento(
-        prenotazioni,
-        aree,
-        filtro_user = request.args.get("user"),
-        filtro_area = request.args.get("area_id"),
+    filtro_user = request.args.get("user")
+    filtro_area = request.args.get("area_id")
+
+    aree = Area.query.all()
+    aree_da_mostrare = [a for a in aree if not filtro_area or a.id == filtro_area]
+
+    query = Prenotazione.query.filter(
+        Prenotazione.inizio >= datetime.combine(limite, datetime.min.time())
     )
+    if filtro_user:
+        query = query.filter_by(user=filtro_user)
+    if filtro_area:
+        query = query.filter_by(area_id=filtro_area)
+
+    conteggi = {}
+    for p in query.all():
+        chiave = (p.area_id, p.inizio.date().isoformat())
+        conteggi[chiave] = conteggi.get(chiave, 0) + 1
+
+    andamento = {}
+    for area in aree_da_mostrare:
+        andamento[area.id] = {
+            "nome": area.nome,
+            "serie": [
+                {"data": d.isoformat(), "prenotazioni": conteggi.get((area.id, d.isoformat()), 0)}
+                for d in tutte_le_date
+            ],
+        }
+
     return jsonify(andamento), 200
+
 
 @app.delete("/api/prenotazioni")
 def elimina_prenotazioni():
@@ -282,6 +308,7 @@ def elimina_prenotazioni():
         msg = f"Eliminate {len(prenotazioni)} prenotazioni dell'area '{area.nome if area else filtro_area}'"
 
     return jsonify({"message": msg, "eliminate": len(prenotazioni)}), 200
+
 
 if __name__ == "__main__":
     app.run("0.0.0.0", 11000, debug=True)
