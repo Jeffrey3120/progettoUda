@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Parcheggi.css'
 
+
 function Parcheggi({ utente }) {
 
   const [aree, setAree] = useState([])
@@ -8,10 +9,14 @@ function Parcheggi({ utente }) {
   const [caricamento, setCaricamento] = useState(true)
   const [mostraModale, setMostraModale] = useState(false)
   const [nuovaArea, setNuovaArea] = useState({ id: '', nome: '', capienza_max: '' })
-  const [invioStato, setInvioStato] = useState(null) 
+  const [invioStato, setInvioStato] = useState(null)
   const [invioLoading, setInvioLoading] = useState(false)
 
-  useEffect(() => { caricaAree() }, [])
+
+  useEffect(function () {
+    caricaAree()
+  }, [])
+
 
   async function caricaAree() {
     setErrore(null)
@@ -19,7 +24,9 @@ function Parcheggi({ utente }) {
     try {
       const risposta = await fetch('/api/aree', { credentials: 'include' })
       const dati = await risposta.json()
-      if (!risposta.ok) throw new Error(dati.error || `Errore ${risposta.status}`)
+      if (!risposta.ok) {
+        throw new Error(dati.error || 'Errore ' + risposta.status)
+      }
       setAree(dati)
     } catch (err) {
       setErrore(err.message)
@@ -28,16 +35,19 @@ function Parcheggi({ utente }) {
     }
   }
 
+
   function apriModale() {
     setNuovaArea({ id: '', nome: '', capienza_max: '' })
     setInvioStato(null)
     setMostraModale(true)
   }
 
+
   function chiudiModale() {
     setMostraModale(false)
     setInvioStato(null)
   }
+
 
   async function handleCreaArea(e) {
     e.preventDefault()
@@ -48,7 +58,11 @@ function Parcheggi({ utente }) {
       nome: nuovaArea.nome,
       capienza_max: parseInt(nuovaArea.capienza_max, 10),
     }
-    if (nuovaArea.id.trim()) payload.id = nuovaArea.id.trim()
+
+    const idPulito = nuovaArea.id.trim()
+    if (idPulito !== '') {
+      payload.id = idPulito
+    }
 
     try {
       const risposta = await fetch('/api/aree', {
@@ -59,11 +73,13 @@ function Parcheggi({ utente }) {
       })
       const dati = await risposta.json()
       if (!risposta.ok) {
-        setInvioStato({ tipo: 'error', msg: dati.error || `Errore ${risposta.status}` })
+        setInvioStato({ tipo: 'error', msg: dati.error || 'Errore ' + risposta.status })
       } else {
-        setInvioStato({ tipo: 'success', msg: `Area "${dati.nome}" creata con successo!` })
+        setInvioStato({ tipo: 'success', msg: 'Area "' + dati.nome + '" creata con successo!' })
         caricaAree()
-        setTimeout(() => chiudiModale(), 1500)
+        setTimeout(function () {
+          chiudiModale()
+        }, 1500)
       }
     } catch {
       setInvioStato({ tipo: 'error', msg: 'Errore di rete.' })
@@ -72,9 +88,18 @@ function Parcheggi({ utente }) {
     }
   }
 
-  if (caricamento) return <div className="stato-caricamento">Caricamento aree...</div>
 
-  const isAdmin = utente?.role === 'admin'
+  if (caricamento) {
+    return <div className="stato-caricamento">Caricamento aree...</div>
+  }
+
+  let isAdmin = false
+  if (utente !== null && utente !== undefined) {
+    if (utente.role === 'admin') {
+      isAdmin = true
+    }
+  }
+
 
   return (
     <div className="parcheggi-page">
@@ -82,7 +107,10 @@ function Parcheggi({ utente }) {
       <div className="parcheggi-header">
         <div className="parcheggi-titoli">
           <h2>Aree di parcheggio</h2>
-          <p>{aree.length} {aree.length === 1 ? 'area trovata' : 'aree trovate'}</p>
+          {aree.length === 1
+            ? <p>{aree.length} area trovata</p>
+            : <p>{aree.length} aree trovate</p>
+          }
         </div>
         <div className="header-azioni">
           {isAdmin && (
@@ -96,26 +124,39 @@ function Parcheggi({ utente }) {
       {errore && <div className="alert alert-error">{errore}</div>}
 
       <div className="aree-grid">
-        {aree.map((area) => {
+        {aree.map(function (area) {
           const occupazione = Math.round(
             ((area.capienza_max - area.posti_disponibili) / area.capienza_max) * 100
           )
           const piena = area.posti_disponibili === 0
 
+          let classeCard = 'area-card'
+          if (piena) {
+            classeCard = 'area-card piena'
+          }
+
+          let classeBadge = 'badge-posti verde'
+          if (piena) {
+            classeBadge = 'badge-posti rosso'
+          }
+
+          let testoBadge = area.posti_disponibili + ' liberi'
+          if (piena) {
+            testoBadge = 'Pieno'
+          }
+
           return (
-            <div key={area.id} className={`area-card${piena ? ' piena' : ''}`}>
+            <div key={area.id} className={classeCard}>
 
               <p className="area-nome">{area.nome}</p>
 
               <div className="area-stats">
                 <span>Capienza: <strong>{area.capienza_max}</strong></span>
-                <span className={`badge-posti ${piena ? 'rosso' : 'verde'}`}>
-                  {piena ? 'Pieno' : `${area.posti_disponibili} liberi`}
-                </span>
+                <span className={classeBadge}>{testoBadge}</span>
               </div>
 
               <div className="barra-sfondo">
-                <div className="barra-riempimento" style={{ width: `${occupazione}%` }} />
+                <div className="barra-riempimento" style={{ width: occupazione + '%' }} />
               </div>
               <p className="barra-label">{occupazione}% occupato</p>
 
@@ -124,9 +165,16 @@ function Parcheggi({ utente }) {
         })}
       </div>
 
-      {/* ── MODALE CREA AREA ── */}
+
       {mostraModale && (
-        <div className="modale-overlay" onClick={(e) => e.target === e.currentTarget && chiudiModale()}>
+        <div
+          className="modale-overlay"
+          onClick={function (e) {
+            if (e.target === e.currentTarget) {
+              chiudiModale()
+            }
+          }}
+        >
           <div className="modale-card">
 
             <div className="modale-header">
@@ -142,7 +190,9 @@ function Parcheggi({ utente }) {
                   type="text"
                   placeholder="es. Parcheggio Ospedale"
                   value={nuovaArea.nome}
-                  onChange={(e) => setNuovaArea({ ...nuovaArea, nome: e.target.value })}
+                  onChange={function (e) {
+                    setNuovaArea({ id: nuovaArea.id, nome: e.target.value, capienza_max: nuovaArea.capienza_max })
+                  }}
                   required
                 />
               </div>
@@ -154,7 +204,9 @@ function Parcheggi({ utente }) {
                   min="1"
                   placeholder="es. 20"
                   value={nuovaArea.capienza_max}
-                  onChange={(e) => setNuovaArea({ ...nuovaArea, capienza_max: e.target.value })}
+                  onChange={function (e) {
+                    setNuovaArea({ id: nuovaArea.id, nome: nuovaArea.nome, capienza_max: e.target.value })
+                  }}
                   required
                 />
               </div>
@@ -165,12 +217,14 @@ function Parcheggi({ utente }) {
                   type="text"
                   placeholder="es. area-004 (lascia vuoto per ID automatico)"
                   value={nuovaArea.id}
-                  onChange={(e) => setNuovaArea({ ...nuovaArea, id: e.target.value })}
+                  onChange={function (e) {
+                    setNuovaArea({ id: e.target.value, nome: nuovaArea.nome, capienza_max: nuovaArea.capienza_max })
+                  }}
                 />
               </div>
 
               {invioStato && (
-                <p className={`modale-stato ${invioStato.tipo}`}>{invioStato.msg}</p>
+                <p className={'modale-stato ' + invioStato.tipo}>{invioStato.msg}</p>
               )}
 
               <div className="modale-footer">
@@ -190,5 +244,6 @@ function Parcheggi({ utente }) {
     </div>
   )
 }
+
 
 export default Parcheggi
