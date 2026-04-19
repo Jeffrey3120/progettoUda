@@ -1,62 +1,82 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import './Storico.css'
 
-function GraficoLinee({ giorni }) {
-  const entries = Object.entries(giorni)
-  const valori  = entries.map(([, v]) => v)
-  const maxVal  = Math.max(...valori, 1)
-  const W = 620, H = 160, PAD = { top: 16, right: 16, bottom: 36, left: 32 }
-  const innerW  = W - PAD.left - PAD.right
-  const innerH  = H - PAD.top  - PAD.bottom
-  const n       = entries.length
+function GraficoLinee({ serie, nomeArea }) {
+  const canvasRef = useRef(null)
+  const chartRef  = useRef(null)
 
-  const pts = entries.map(([, v], i) => ({
-    x: PAD.left + (i / Math.max(n - 1, 1)) * innerW,
-    y: PAD.top  + innerH - (v / maxVal) * innerH,
-  }))
+  useEffect(() => {
+    if (!canvasRef.current || !serie?.length) return
 
-  const linea = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ')
-  const fill  = `${linea} L${pts[pts.length-1].x},${PAD.top+innerH} L${pts[0].x},${PAD.top+innerH} Z`
-  const labelX = entries.map(([d], i) => ({ d, i })).filter((_, i) => i % 7 === 0 || i === n-1)
-  const ticksY = [0, 0.5, 1].map((f) => ({ y: PAD.top + innerH - f * innerH, val: Math.round(f * maxVal) }))
+    const renderChart = (Chart) => {
+      if (chartRef.current) chartRef.current.destroy()
+      chartRef.current = new Chart(canvasRef.current, {
+        type: 'line',
+        data: {
+          labels: serie.map(p => p.data.slice(5)),
+          datasets: [{
+            label:                nomeArea,
+            data:                 serie.map(p => p.prenotazioni),
+            borderColor:          '#01696f',
+            backgroundColor:      'rgba(1,105,111,0.08)',
+            borderWidth:          2.5,
+            pointRadius:          3,
+            pointBackgroundColor: '#fff',
+            pointBorderColor:     '#01696f',
+            pointBorderWidth:     2,
+            tension:              0.3,
+            fill:                 true,
+          }],
+        },
+        options: {
+          responsive:          true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => `Data: ${items[0].label}`,
+                label: (item)  => ` ${item.raw} prenotazion${item.raw === 1 ? 'e' : 'i'}`,
+              },
+            },
+          },
+          scales: {
+            x: {
+              grid:  { display: false },
+              ticks: { font: { size: 9 }, color: '#9aa', maxTicksLimit: 8 },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1, precision: 0, font: { size: 9 }, color: '#9aa' },
+              grid:  { color: '#f0f0f0' },
+            },
+          },
+        },
+      })
+    }
 
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="grafico-svg" aria-label="Andamento prenotazioni">
-      <defs>
-        <linearGradient id="gradLine" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor="#01696f" />
-          <stop offset="100%" stopColor="#20a8b0" />
-        </linearGradient>
-        <linearGradient id="gradFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#01696f" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#01696f" stopOpacity="0"   />
-        </linearGradient>
-      </defs>
-      {ticksY.map(({ y, val }) => (
-        <g key={y}>
-          <line x1={PAD.left} x2={PAD.left+innerW} y1={y} y2={y} stroke="#e8ecec" strokeWidth="1" strokeDasharray="4 3" />
-          <text x={PAD.left-5} y={y+4} textAnchor="end" fontSize="9" fill="#aab">{val}</text>
-        </g>
-      ))}
-      <path d={fill}  fill="url(#gradFill)" />
-      <path d={linea} fill="none" stroke="url(#gradLine)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      {pts.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#fff" stroke="#01696f" strokeWidth="2" />)}
-      {labelX.map(({ d, i }) => (
-        <text key={d} x={pts[i].x} y={H-4} textAnchor="middle" fontSize="9" fill="#9aa">{d.slice(5)}</text>
-      ))}
-    </svg>
-  )
+    if (window.Chart) {
+      renderChart(window.Chart)
+    } else {
+      const script    = document.createElement('script')
+      script.src      = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'
+      script.onload   = () => renderChart(window.Chart)
+      document.head.appendChild(script)
+    }
+
+    return () => { if (chartRef.current) chartRef.current.destroy() }
+  }, [serie, nomeArea])
+
+  return <canvas ref={canvasRef} className="grafico-canvas" />
 }
 
 function Storico() {
   const [prenotazioni, setPrenotazioni] = useState([])
   const [andamento,    setAndamento]    = useState({})
-  const [areeList,     setAreeList]     = useState([])  
-  const [utentiList,   setUtentiList]   = useState([])   
-
+  const [areeList,     setAreeList]     = useState([])
+  const [utentiList,   setUtentiList]   = useState([])
   const [filtroArea,   setFiltroArea]   = useState(null)
   const [filtroUtente, setFiltroUtente] = useState(null)
-
   const [caricamento,  setCaricamento]  = useState(true)
   const [errore,       setErrore]       = useState(null)
   const [feedback,     setFeedback]     = useState(null)
@@ -69,31 +89,32 @@ function Storico() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/statistiche/andamento', { credentials: 'include' }),
-      fetch('/api/utenti',                { credentials: 'include' }),
+      fetch('/api/aree',   { credentials: 'include' }),
+      fetch('/api/utenti', { credentials: 'include' }),
     ]).then(async ([r1, r2]) => {
-      if (r1.ok) {
-        const d = await r1.json()
-        setAndamento(d)
-        setAreeList(Object.entries(d).map(([id, { nome }]) => ({ id, nome })))
-      }
+      if (r1.ok) setAreeList((await r1.json()).map(a => ({ id: a.id, nome: a.nome })))
       if (r2.ok) setUtentiList(await r2.json())
     })
   }, [])
 
-  const caricaPrenotazioni = useCallback(async () => {
+  const caricaDati = useCallback(async () => {
     setCaricamento(true)
     setErrore(null)
     try {
       const params = new URLSearchParams()
       if (filtroArea)   params.set('area_id', filtroArea)
       if (filtroUtente) params.set('user',    filtroUtente)
+      const qs = params.toString()
 
-      const url = `/api/prenotazioni/tutte${params.toString() ? '?' + params : ''}`
-      const r = await fetch(url, { credentials: 'include' })
-      if (!r.ok) throw new Error(`Errore ${r.status}`)
-      const d = await r.json()
-      setPrenotazioni(d.prenotazioni || [])
+      const [r1, r2] = await Promise.all([
+        fetch(`/api/prenotazioni/tutte${qs ? '?' + qs : ''}`,    { credentials: 'include' }),
+        fetch(`/api/statistiche/andamento${qs ? '?' + qs : ''}`, { credentials: 'include' }),
+      ])
+      if (!r1.ok) throw new Error(`Prenotazioni: errore ${r1.status}`)
+      if (!r2.ok) throw new Error(`Andamento: errore ${r2.status}`)
+
+      setPrenotazioni((await r1.json()).prenotazioni || [])
+      setAndamento(await r2.json())
     } catch (err) {
       setErrore(err.message)
     } finally {
@@ -101,17 +122,17 @@ function Storico() {
     }
   }, [filtroArea, filtroUtente])
 
-  useEffect(() => { caricaPrenotazioni() }, [caricaPrenotazioni])
+  useEffect(() => { caricaDati() }, [caricaDati])
 
   async function eliminaPrenotazione(id) {
     if (!confirm('Eliminare questa prenotazione?')) return
     setEliminando(id)
     try {
-      const r = await fetch(`/api/prenotazioni/${id}`, { method: 'DELETE', credentials: 'include' })
+      const r = await fetch(`/api/prenotazioni?id=${id}`, { method: 'DELETE', credentials: 'include' })
       const d = await r.json()
       if (!r.ok) throw new Error(d.error || `Errore ${r.status}`)
-      mostraFeedback('ok', d.message || 'Prenotazione eliminata.')
-      caricaPrenotazioni()
+      mostraFeedback('ok', d.message)
+      caricaDati()
     } catch (err) {
       mostraFeedback('err', err.message)
     } finally {
@@ -120,16 +141,16 @@ function Storico() {
   }
 
   async function svuotaRisultati() {
+    const nomeFiltroArea = areeList.find(a => a.id === filtroArea)?.nome
     let conferma
-    if (filtroUtente && filtroArea) {
+    if (filtroUtente && filtroArea)
       conferma = `Eliminare tutte le prenotazioni di "${filtroUtente}" nel "${nomeFiltroArea}"?`
-    } else if (filtroUtente) {
+    else if (filtroUtente)
       conferma = `Eliminare tutte le prenotazioni di "${filtroUtente}"?`
-    } else if (filtroArea) {
+    else if (filtroArea)
       conferma = `Eliminare tutte le prenotazioni dell'area "${nomeFiltroArea}"?`
-    } else {
-      return 
-    }
+    else return
+
     if (!confirm(conferma)) return
 
     try {
@@ -140,23 +161,21 @@ function Storico() {
       const r = await fetch(`/api/prenotazioni?${params}`, { method: 'DELETE', credentials: 'include' })
       const d = await r.json()
       if (!r.ok) throw new Error(d.error || `Errore ${r.status}`)
-      mostraFeedback('ok', d.message || 'Prenotazioni eliminate.')
-      caricaPrenotazioni()
+      mostraFeedback('ok', d.message)
+      caricaDati()
     } catch (err) {
       mostraFeedback('err', err.message)
     }
   }
 
-  const nomeFiltroArea   = areeList.find(a => a.id === filtroArea)?.nome
-  const areeGrafico      = filtroArea ? areeList.filter(a => a.id === filtroArea) : areeList
-  const filtriAttivi     = [
-    filtroArea    && { chiave: 'area',   label: `Area: ${nomeFiltroArea}`,   reset: () => setFiltroArea(null)   },
-    filtroUtente  && { chiave: 'utente', label: `Utente: ${filtroUtente}`,   reset: () => setFiltroUtente(null) },
+  const nomeFiltroArea = areeList.find(a => a.id === filtroArea)?.nome
+  const filtriAttivi   = [
+    filtroArea   && { chiave: 'area',   label: `Area: ${nomeFiltroArea}`, reset: () => setFiltroArea(null)   },
+    filtroUtente && { chiave: 'utente', label: `Utente: ${filtroUtente}`, reset: () => setFiltroUtente(null) },
   ].filter(Boolean)
 
   return (
     <div className="storico-page">
-
       <div className="storico-header">
         <div>
           <h2>Storico prenotazioni</h2>
@@ -168,25 +187,17 @@ function Storico() {
         <div className="storico-header-azioni">
           <div className="filtro-gruppo">
             <label htmlFor="sel-area">Area</label>
-            <select
-              id="sel-area"
-              value={filtroArea ?? ''}
-              onChange={(e) => setFiltroArea(e.target.value || null)}
-            >
+            <select id="sel-area" value={filtroArea ?? ''} onChange={(e) => setFiltroArea(e.target.value || null)}>
               <option value="">Tutte le aree</option>
-              {areeList.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
+              {areeList.map(a => <option key={a.id} value={a.id}>{a.nome}</option>)}
             </select>
           </div>
 
           <div className="filtro-gruppo">
             <label htmlFor="sel-utente">Utente</label>
-            <select
-              id="sel-utente"
-              value={filtroUtente ?? ''}
-              onChange={(e) => setFiltroUtente(e.target.value || null)}
-            >
+            <select id="sel-utente" value={filtroUtente ?? ''} onChange={(e) => setFiltroUtente(e.target.value || null)}>
               <option value="">Tutti gli utenti</option>
-              {utentiList.map((u) => <option key={u} value={u}>{u}</option>)}
+              {utentiList.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
           </div>
 
@@ -210,10 +221,10 @@ function Storico() {
       {filtriAttivi.length > 0 && (
         <div className="filtri-attivi-bar">
           <span className="filtri-label">Filtri attivi:</span>
-          {filtriAttivi.map((f) => (
+          {filtriAttivi.map(f => (
             <span key={f.chiave} className="badge-filtro">
               {f.label}
-              <button className="badge-filtro-reset" onClick={f.reset} title="Rimuovi filtro">×</button>
+              <button className="badge-filtro-reset" onClick={f.reset} title="Rimuovi">×</button>
             </span>
           ))}
           <button className="reset-tutti" onClick={() => { setFiltroArea(null); setFiltroUtente(null) }}>
@@ -228,18 +239,16 @@ function Storico() {
         </div>
       )}
 
-      {!filtroUtente && areeGrafico.length > 0 && (
+      {!caricamento && Object.keys(andamento).length > 0 && (
         <section className="sezione-grafici">
           <h3 className="sezione-titolo">Andamento ultimi 30 giorni</h3>
           <div className="grafici-grid">
-            {areeGrafico.map((a) =>
-              andamento[a.id] ? (
-                <div key={a.id} className="grafico-card">
-                  <p className="grafico-area-nome">{a.nome}</p>
-                  <GraficoLinee giorni={andamento[a.id].giorni} />
-                </div>
-              ) : null
-            )}
+            {Object.entries(andamento).map(([areaId, { nome, serie }]) => (
+              <div key={areaId} className="grafico-card">
+                <p className="grafico-area-nome">{nome}</p>
+                <GraficoLinee serie={serie} nomeArea={nome} />
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -266,7 +275,7 @@ function Storico() {
               </tr>
             </thead>
             <tbody>
-              {prenotazioni.map((p) => {
+              {prenotazioni.map(p => {
                 const conclusa = new Date(p.fine) < new Date()
                 return (
                   <tr key={p.id} className="riga-prenotazione">
