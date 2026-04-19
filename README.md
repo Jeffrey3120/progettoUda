@@ -87,17 +87,22 @@ I soggetti coinvolti nel progetto sono:
 
 - **Python 3.13+** installato sul sistema
 - **Node.js** installato sul sistema
-- **uv** per la gestione delle dipendenze Python (installabile con `pip install uv`)
+- **uv** (opzionale, per la gestione moderna delle dipendenze Python; installabile con `pip install uv`)
 
 ### Installazione delle Dipendenze
 
-1. **Dipendenze Python**: Esegui `uv sync` nella directory principale del progetto per installare tutte le dipendenze Python specificate in `pyproject.toml`.
+1. **Dipendenze Python**:
+   - Con uv (raccomandato): Esegui `uv sync` nella directory principale del progetto per installare tutte le dipendenze Python specificate in `pyproject.toml`.
+   - Con pip: Esegui `pip install -r requirements.txt` per installare le dipendenze dal file `requirements.txt`.
 
 2. **Dipendenze Frontend**: Esegui `npm install` nella directory principale del progetto per installare tutte le dipendenze JavaScript specificate in `package.json`.
 
 ### Avvio dell'Applicazione
 
-1. **Avvia il Backend**: In un terminale, esegui `python admin/main.py`. Il backend sarà disponibile su `http://localhost:11000`.
+1. **Avvia il Backend**: 
+   - Con uv: `uv run python admin/main.py`
+   - Con pip: `python admin/main.py` (assicurati che le dipendenze siano installate nell'ambiente Python attivo)
+   Il backend sarà disponibile su `http://localhost:11000`.
 
 2. **Avvia il Frontend**: In un altro terminale, esegui `npm run dev`. Il frontend sarà disponibile su `http://localhost:5173` e proxy le richieste API al backend.
 
@@ -105,10 +110,15 @@ I soggetti coinvolti nel progetto sono:
 
 ### Inizializzazione del Database
 
-- Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui `python admin/seed.py` per popolare il database con alcune aree di parcheggio di esempio.
+- Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui:
+  - Con uv: `uv run python admin/seed.py`
+  - Con pip: `python admin/seed.py`
+  per popolare il database con alcune aree di parcheggio di esempio.
 
 ---
 
 ### Note Aggiuntive
+
+- Assicurati che la variabile d'ambiente `SECRET_KEY` sia impostata per la sicurezza delle sessioni (es. `export SECRET_KEY="tuachiave"`, ha un valore di default se non impostata).
 - Il database SQLite `smartcity.db` verrà creato automaticamente nella directory `admin/instance/` alla prima esecuzione.
 - Per lo sviluppo, entrambi i server (backend e frontend) possono essere lasciati in esecuzione contemporaneamente.
