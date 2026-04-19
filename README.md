@@ -100,19 +100,17 @@ I soggetti coinvolti nel progetto sono:
 ### Avvio dell'Applicazione
 
 1. **Avvia il Backend**: 
-   - Con uv: `uv run python admin/main.py`
-   - Con pip: `python admin/main.py` (assicurati che le dipendenze siano installate nell'ambiente Python attivo)
+   Con pip: `python admin/main.py` (assicurati che le dipendenze siano installate nell'ambiente Python attivo)
    Il backend sarà disponibile su `http://localhost:11000`.
 
-2. **Avvia il Frontend**: In un altro terminale, esegui `npm run dev`. Il frontend sarà disponibile su `http://localhost:5173` e proxy le richieste API al backend.
+2. **Avvia il Frontend**: In un altro terminale, scrivi il comando `npm install` ed esegui `npm run dev`. Il frontend sarà disponibile su `http://localhost:5173` e proxy le richieste API al backend.
 
 3. Apri il browser e vai su `http://localhost:5173` per utilizzare l'applicazione.
 
 ### Inizializzazione del Database
 
 - Dopo aver avviato il backend almeno una volta (per permettere a SQLAlchemy di creare le tabelle nel database `smartcity.db`), esegui:
-  - Con uv: `uv run python admin/seed.py`
-  - Con pip: `python admin/seed.py`
+  Con pip: `python admin/seed.py`
   per popolare il database con alcune aree di parcheggio di esempio.
 
 ---
