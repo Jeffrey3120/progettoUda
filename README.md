@@ -29,7 +29,6 @@ I soggetti coinvolti nel progetto sono:
 
 - **Utente standard (`user`)** — l'automobilista che utilizza il sistema per visualizzare la disponibilità dei parcheggi, prenotare e cancellare posti
 - **Amministratore (`admin`)** — il gestore del sistema, responsabile della creazione delle aree, del monitoraggio delle prenotazioni e dell'analisi statistica
-- **Sviluppatore** — il manutentore del sistema, interessato alla manutenibilità, scalabilità ed estensibilità del codice
 
 ---
 
